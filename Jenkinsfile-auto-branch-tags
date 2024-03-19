@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    environment {
+        REPO="${params.REPO}"
+        NEW_TAG="${params.NEW_TAG}"
+        CREATE_BRANCH_ON_TAG="${params.CREATE_BRANCH_ON_TAG}"
+    }
+    stages {
+        stage('stage1') {
+           steps {
+            sh '''
+                mkdir branchtags
+                git clone $REPO /branchtags
+                cd branchtags
+                git checkout main
+                git tag $NEW_TAG
+                if ($CREATE_BRANCH_ON_TAG=true) {
+                    git branch $NEW_TAG
+                    git push
+                } else {
+                    git push
+                }
+                '''  
+            }
+        }        
+    }
+}         
